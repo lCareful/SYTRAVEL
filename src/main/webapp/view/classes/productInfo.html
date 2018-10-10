@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link href="../../css/commom1.css" type="text/css" rel="Stylesheet"/>
+    <link href="../../css/style1.css" type="text/css" rel="Stylesheet"/>
+    <link rel="stylesheet" href="../../css/bootstrap.css"/>
+    <script src="../../js/jquery-1.11.3.js"></script>
+    <script src="../../js/bootstrap.js"></script>
+    <!--[if lt IE 9]>
+    <script src="../../js/html5shiv.min.js"></script>
+    <script src="../../js/respond.min.js"></script>
+    <![endif]-->
+    <script src="../../js/angularjs/angular1.js"></script>
+    <script src="../../js/angularjs/angular-ui-router.js"></script>
+    <title>分类详细信息</title>
+</head>
+<body ng-app="syApp" ng-controller="pcCtrl">
+<div class="page-header" align="center">
+<ul class="breadcrumb">
+  <li><a href="classesinfo.html">分类信息</a><span class="divider">></span></li>
+  <li class="active"><h1>{{pname}}分类的详细信息</h1></li>
+</ul>
+</div>
+<div id="show">
+    <table
+            class="table table-bordered table-striped  table-hover table-responsive "
+    >
+        <thead>
+        <tr>
+            <th class="first3">序号</th>
+            <th class="first3">产品编号</th>
+            <th class="first3">产品名称</th>
+            <th class="first3">所属团队</th>
+            <th class="first3">上架时间</th>
+            <th class="first3">下架时间</th>
+            <th class="first3">已售数量</th>
+            <th class="first3">产品价格</th>
+            <th class="first3">产品分类</th>
+            <th class="first3">创建人</th>
+           	<th class="first3">创建时间</th>
+        </tr>
+        </thead>
+        <tbody id="_tbody">
+        <tr ng-repeat="v in infoTeamData track by $index">
+            <td>{{$index + 1}}</td>
+            <td>{{v.code}}</td>
+            <td>{{v.name}}</td>
+            <td>{{v.tname}}</td>
+            <td>{{v.onlineDate}}</td>
+            <td>{{v.offlineDate}}</td>
+            <td>{{v.soldQty}}</td>
+           	<td>{{v.price}}</td>
+            <td>{{v.cname}}</td>
+            <td>{{v.createdUser}}</td>
+            <td>{{v.createdDate}}</td>
+            <td>{{v.remark}}</td>
+        </tr>
+        </tbody>
+        <tfoot id="_tfoot">
+        </tfoot>
+    </table>
+</div>
+</body>
+<script src="../common/page.js"></script>
+<script>
+	app.controller('pcCtrl', ['$scope', '$http', function ($scope, $http) {
+		var str = window.location.search.toString();
+		var pid = parseInt(str.substring(4));
+		var name = decodeURI(str.substring(str.indexOf("e")+2));
+		$scope.pname = name;
+		tAndPinfo(pid);
+		function tAndPinfo(id) {
+			$http.get('http://localhost:8080/sy/classes/info', {params:{'id':id+""}})
+	  	  	.success(function (data) {
+	       		if(data.msg == "failed"){
+	        		alert(data.data);
+	        	} else {
+	            	$scope.infoTeamData = data.data.documents;
+	       	 	}
+	    	})
+	    	.error(function () {
+	    		console.log("error");
+			});
+		}
+	}]);
+	</script>
+</html>

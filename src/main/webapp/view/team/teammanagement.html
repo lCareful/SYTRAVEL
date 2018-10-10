@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link href="../../css/commom1.css" type="text/css" rel="Stylesheet"/>
+    <link href="../../css/style1.css" type="text/css" rel="Stylesheet"/>
+    <link rel="stylesheet" href="../../css/bootstrap.css"/>
+    <script src="../../js/jquery-1.11.3.js"></script>
+    <script src="../../js/bootstrap.js"></script>
+    <!--[if lt IE 9]>
+    <script src="../../js/html5shiv.min.js"></script>
+    <script src="../../js/respond.min.js"></script>
+    <![endif]-->
+    <script src="../../js/angularjs/angular1.js"></script>
+    <script src="../../js/angularjs/angular-ui-router.js"></script>
+    <title>团队管理</title>
+</head>
+<body ng-app="syApp" ng-controller="teamCtrl">
+<div id="show">
+    <table
+            class="table table-bordered table-striped  table-hover table-responsive ">
+        <thead>
+        <tr>
+            <th class="first3">序号</th>
+            <th class="first3">团队名称</th>
+            <th class="first3">所属项目</th>
+            <th class="first3">状态</th>
+            <th class="first3">创建者</th>
+            <th class="first3">创建时间</th>
+            <th class="first3">修改者</th>
+			<th class="first3">修改时间</th>
+            <th class="first3">备注</th>
+            <th class="first3">操作</th>
+        </tr>
+        </thead>
+        <tbody id="_tbody">
+        <tr ng-repeat="v in data track by $index">
+            <td>{{$index + 1}}</td>
+            <td>{{v.name}}</td>
+            <td>{{v.pname}}</td>
+            <td>{{v.valid == "1" ? "启用":"禁用"}}</td>
+            <td>{{v.createdUser}}</td>
+           	<td>{{v.createdDate}}</td>
+            <td>{{v.modifiedUser}}</td>
+            <td>{{v.modifiedDate}}</td>
+            <td>{{v.remark}}</td>
+            <td>
+                <button data-toggle="modal" data-target="#updateTeamModal" class="btn btn-warning"
+                        ng-click="updateValue(v)">修改
+                </button>
+                <button ng-click="deleteTeam(v.id);" class="btn btn-danger">删除</button>
+            </td>
+        </tr>
+        </tbody>
+        <tfoot id="_tfoot">
+    </table>
+     <div ng-show="isShow">
+			<!-- 这个分页的导航栏开始数字和结束数字会随着用户的点击而改变 -->
+			<ul class="pagination pull-right">
+				<li><a ng-click="previous();">&laquo;</a></li>
+				<li ng-repeat="page in paging"
+					ng-class="{active:isActivePage(page)}"><a
+					ng-click="current(page);">{{page}}</a></li>
+				<li><a ng-click="next();">&raquo;</a></li>
+			</ul>
+		</div>
+</div>
+<div style="text-align: center;">
+    <button class="btn btn-primary btn-add" data-toggle="modal"  ng-click="addValue();" data-target="#addTeamModal">添加团队
+    </button><!-- data-target="#addTeamModal" -->
+</div>
+<!--添加团队信息的模态框-->
+<div class="modal fade" id="addTeamModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;
+                </button>
+                <h4 class="modal-title">添加团队信息</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="addTeamName" class="col-sm-2 control-label">团队名</label>
+                        <div class="col-sm-10">
+                            <input style="width: 384px;" type="text" class="form-control"
+                                   id="addTeamName" placeholder="请输入团队名" ng-model="addName">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="addTeamPid">所属项目</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" ng-model="addPid">
+                            	<option value="">-- 请选择 --</option>
+                            	<option ng-repeat="v in pdata track by $index" value="{{v.id}}">{{v.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">状态</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" ng-model="addValid">
+                                <option value="">-- 请选择 --</option>
+                                <option value="1">启用</option>
+                                <option value="0">禁用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="addTeamRemark" class="col-sm-2 control-label">描述</label>
+                        <div class="col-sm-10"><!-- col-sm-10：小屏幕时占10/12 -->
+                            <textarea class="form-control" rows="3" placeholder="请输入描述信息"
+                                      id="addTeamRemark" ng-model="addRemark"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <div style="color: red; text-align: center; font-size: 35px">{{addReason}}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消
+                </button>
+                <button type="button" class="btn btn-primary change" ng-click="addTeam();">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--修改团队信息的模态框-->
+<div class="modal fade" id="updateTeamModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;
+                </button>
+                <h4 class="modal-title">修改团队信息</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="updateTeamName" class="col-sm-2 control-label">团队名</label>
+                        <div class="col-sm-10">
+                            <input style="width: 384px;" type="text" class="form-control"
+                                   id="updateTeamName" ng-model="updateName">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">所属项目</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" ng-model="updatePid">
+                            	<option ng-repeat="v in pdata track by $index" value="{{v.id}}">{{v.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">状态</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" ng-model="updateValid">
+                                <option value="">-- 请选择 --</option>
+                                <option value="1">启用</option>
+                                <option value="0">禁用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateRemark" class="col-sm-2 control-label">描述</label>
+                        <div class="col-sm-10"><!-- col-sm-10：小屏幕时占10/12 -->
+                            <textarea class="form-control" rows="3" placeholder="请输入描述信息"
+                                      id="updateRemark" ng-model="updateRemark"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <div style="color: red; text-align: center; font-size: 35px">{{updateReason}}</span></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消
+                </button>
+                <button type="button" class="btn btn-primary change" ng-click="updateTeam();">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../common/page.js"></script>
+<script src="../../js/view/team/team.js"></script>
+</body>
+</html>

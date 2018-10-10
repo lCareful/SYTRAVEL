@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>后台登录</title>
+<meta name="author" content="" />
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<style>
+body {
+	height: 100%;
+	background: #16a085;
+	overflow: hidden;
+}
+
+canvas {
+	z-index: -1;
+	position: absolute;
+}
+
+#reason {
+	color: red;
+	height: 26px;
+	line-height: 26px;
+}
+</style>
+<script src="js/jquery.js"></script>
+<script src="js/jquery-1.11.3.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/verificationNumbers.js"></script>
+<script src="js/Particleground.js"></script>
+<script src="js/angularjs/angular1.js"></script>
+<script src="js/angularjs/angular-ui-router.js"></script>
+</head>
+<body ng-app="syApp" ng-controller="loginCtrl">
+	<dl class="admin_login">
+		<dt>
+			<strong>尚游旅游业务管理平台</strong> <em>ShangYou travel business
+				management system</em>
+		</dt>
+		<dd class="user_icon">
+			<input type="text" placeholder="账号" ng-model="username"
+				class="login_txtbx" />
+		</dd>
+		<dd class="pwd_icon">
+			<input type="password" placeholder="密码" ng-model="pwd"
+				class="login_txtbx" />
+		</dd>
+		<span id="reason"> {{failed}} </span>
+		<dd>
+			<input type="button" value="登录" class="submit_btn"
+				ng-click="loginBtn();" />
+		</dd>
+		<dd>
+			<p>© 2017-2018 liuxin 版权所有</p>
+		</dd>
+	</dl>
+</body>
+<script type="text/javascript">
+	$(document).ready(function() {
+		// 粒子背景特效
+		$('body').particleground({
+			dotColor : '#5cbdaa',
+			lineColor : '#5cbdaa'
+		});
+	});
+</script>
+<script>
+document.cookie = "";
+var app = angular.module("syApp", [ 'ui.router' ]);
+	app.controller('loginCtrl', [
+			'$scope',
+			'$http',
+			function($scope, $http) {
+				/* 点击登录按钮 */
+				$scope.loginBtn = function() {
+					login();
+				}
+				/* 回车登录事件 */
+				document.onkeydown = function(event) {
+					var e = event || window.event;
+					if (e.keyCode == 13) {
+						login();
+					}
+				}
+
+				/* 登录验证 */
+				function login() {
+					var params = {
+						'username' : $scope.username,
+						'password' : $scope.pwd
+					}
+					$http.post("http://localhost:8080/sy/login/check",
+							JSON.stringify(params)).success(function(data) {
+						if (data.msg == "failed") {
+							$scope.failed = data.data;
+						} else {
+							document.cookie = $scope.username;
+							window.location.href = "index.html";
+						}
+					}).error(function(err) {
+						alert("登录失败");
+					});
+				}
+			} ]);
+</script>
+</html>

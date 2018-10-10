@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="utf-8" />
+<meta name="viewport"
+	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<link href="../../css/commom1.css" type="text/css" rel="Stylesheet" />
+<link href="../../css/style1.css" type="text/css" rel="Stylesheet" />
+<link rel="stylesheet" href="../../css/bootstrap.css" />
+<script src="../../js/jquery-1.11.3.js"></script>
+<script src="../../js/bootstrap.js"></script>
+<!--[if lt IE 9]>
+    <script src="../../js/html5shiv.min.js"></script>
+    <script src="../../js/respond.min.js"></script>
+    <![endif]-->
+<script src="../../js/angularjs/angular1.js"></script>
+<script src="../../js/angularjs/angular-ui-router.js"></script>
+<title>角色管理</title>
+</head>
+<body ng-app="syApp" ng-controller="roleCtrl">
+	<div class="col-lg-6">
+		<div class="input-group" id="div">
+			<select class="form-control" ng-model="queryTid"
+				ng-change="queryByTid();">
+				<option value="">-- 请选择 --</option>
+				<option ng-repeat="v in tdata track by $index" value="{{v.id}}">{{v.name}}</option>
+			</select>
+		</div>
+	</div>
+	<div id="show">
+		<table
+			class="table table-bordered table-striped  table-hover table-responsive ">
+			<thead>
+				<tr>
+					<th class="first3">序号</th>
+					<th class="first3">角色名字</th>
+					<th class="first3">所属团队</th>
+					<th class="first3">扮演角色</th>
+					<th class="first3">邮箱</th>
+					<th class="first3">手机号</th>
+					<th class="first3">创建人</th>
+					<th class="first3">创建时间</th>
+					<th class="first3">修改人</th>
+					<th class="first3">修改时间</th>
+					<th class="first3">备注</th>
+					<th class="first3">操作</th>
+				</tr>
+			</thead>
+			<tbody id="_tbody">
+				<tr ng-repeat="v in data track by $index">
+					<td>{{$index + 1}}</td>
+					<td>{{v.name}}</td>
+					<td>{{v.tname}}</td>
+					<td>{{roleData[v.role].name}}</td>
+					<td>{{v.email}}</td>
+					<td>{{v.mobile}}</td>
+					<td>{{v.createdUser}}</td>
+					<td>{{v.createdDate}}</td>
+					<td>{{v.modifiedUser}}</td>
+					<td>{{v.modifiedDate}}</td>
+					<td>{{v.remark}}</td>
+					<td>
+						<button data-toggle="modal" data-target="#updateRoleModal"
+							class="btn btn-warning" ng-click="updateValue(v)">修改</button>
+						<button ng-click="deleteRole(v.id);" class="btn btn-danger">删除</button>
+					</td>
+				</tr>
+			</tbody>
+			<tfoot id="_tfoot">
+			</tfoot>
+		</table>
+		<div ng-show="isShow">
+			<!-- 这个分页的导航栏开始数字和结束数字会随着用户的点击而改变 -->
+			<ul class="pagination pull-right">
+				<li><a ng-click="previous();">&laquo;</a></li>
+				<li ng-repeat="page in paging"
+					ng-class="{active:isActivePage(page)}"><a
+					ng-click="current(page);">{{page}}</a></li>
+				<li><a ng-click="next();">&raquo;</a></li>
+			</ul>
+		</div>
+	</div>
+	<div style="text-align: center;">
+		<button class="btn btn-primary btn-update" data-toggle="modal"
+			ng-click="addValue();" data-target="#addRoleModal">添加角色</button>
+	</div>
+	<!--添加产品信息的模态框-->
+	<div class="modal fade" id="addRoleModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">添加角色信息</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form">
+						<div class="form-group">
+							<label for="addRoleName" class="col-sm-2 control-label">角色名</label>
+							<div class="col-sm-10">
+								<input style="width: 384px;" type="text" class="form-control"
+									id="addRoleName" placeholder="请输入角色名" ng-model="addName">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">所属团队</label>
+							<div class="col-sm-10">
+								<select class="form-control" ng-model="addTeamId">
+									<option value="">-- 请选择 --</option>
+									<option ng-repeat="v in tdata track by $index" value="{{v.id}}">{{v.name}}</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">身份</label>
+							<div class="col-sm-10">
+								<select class="form-control" ng-model="addRoles">
+									<option value="">-- 请选择 --</option>
+									<option ng-repeat="v in roleData track by $index" value="{{v.id}}">{{v.name}}</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="addQquantity">邮箱地址</label>
+							<div class="col-sm-10">
+								<input style="width: 384px;" type="text" class="form-control"
+									id="addQquantity" placeholder="请输入邮箱地址" ng-model="addEmail"	>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="addMinQty">手机号码</label>
+							<div class="col-sm-10">
+								<input style="width: 384px;" type="number" class="form-control"
+									id="addMinQty" placeholder="请输入手机号" ng-model="addMobile"
+									onkeyup="value=value.replace(/[^\d]/g,'')">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="addClassesRemark" class="col-sm-2 control-label">描述</label>
+							<div class="col-sm-10">
+								<!-- col-sm-10：小屏幕时占10/12 -->
+								<textarea class="form-control" rows="3" placeholder="请输入描述信息"
+									id="addClassesRemark" ng-model="addRemark"></textarea>
+							</div>
+						</div>
+					</form>
+					<div style="color: red; text-align: center; font-size: 35px">{{addReason}}</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消
+					</button>
+					<button type="button" class="btn btn-primary change"
+						ng-click="addRole();">确认</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--修改产品信息的模态框-->
+	<div class="modal fade" id="updateRoleModal" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">修改角色信息</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form">
+						<div class="form-group">
+							<label for="updateRoleName" class="col-sm-2 control-label">角色名</label>
+							<div class="col-sm-10">
+								<input style="width: 384px; background:#CCCCCC" type="text" class="form-control"
+									id="updateRoleName" ng-model="updateName" readonly="readonly">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">所属团队</label>
+							<div class="col-sm-10">
+								<input style="width: 384px; background:#CCCCCC" type="text" class="form-control"
+									  ng-model="updateTname" readonly="readonly">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">身份</label>
+							<div class="col-sm-10">
+								<select class="form-control" ng-model="updateRoles">
+									<option value="">-- 请选择 --</option>
+									<option ng-repeat="v in roleData track by $index" value="{{v.id}}">{{v.name}}</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="updateQquantity">邮箱地址</label>
+							<div class="col-sm-10">
+								<input style="width: 384px;" type="text" class="form-control"
+									id="updateQquantity" placeholder="请输入邮箱地址"
+									ng-model="updateEmail"	>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="updateMinQty">手机号码</label>
+							<div class="col-sm-10">
+								<input style="width: 384px;" type="number" class="form-control"
+									id="updateMinQty" placeholder="请输入手机号" ng-model="updateMobile"
+									onkeyup="value=value.replace(/[^\d]/g,'')">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="updateClassesRemark" class="col-sm-2 control-label">描述</label>
+							<div class="col-sm-10">
+								<!-- col-sm-10：小屏幕时占10/12 -->
+								<textarea class="form-control" rows="3" placeholder="请输入描述信息"
+									id="updateClassesRemark" ng-model="updateRemark"></textarea>
+							</div>
+						</div>
+					</form>
+					<div style="color: red; text-align: center; font-size: 35px">{{updateReason}}</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消
+					</button>
+					<button type="button" class="btn btn-primary change"
+						ng-click="updateRole();">确认</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="../common/page.js"></script>
+	<script src="../../js/view/role/role.js"></script>
+</body>
+</html>

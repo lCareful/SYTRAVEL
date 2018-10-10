@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="utf-8" />
+<meta name="viewport"
+	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<link href="../../css/commom1.css" type="text/css" rel="Stylesheet" />
+<link href="../../css/style1.css" type="text/css" rel="Stylesheet" />
+<link rel="stylesheet" href="../../css/bootstrap.css" />
+<script src="../../js/jquery-1.11.3.js"></script>
+<script src="../../js/bootstrap.js"></script>
+<!--[if lt IE 9]>
+    <script src="../../js/html5shiv.min.js"></script>
+    <script src="../../js/respond.min.js"></script>
+    <![endif]-->
+<script src="../../js/angularjs/angular1.js"></script>
+<script src="../../js/angularjs/angular-ui-router.js"></script>
+<title>信息监控</title>
+</head>
+<body ng-app="syApp" ng-controller="monitorCtrl">
+	<div class="col-lg-6">
+		<div class="input-group" id="div">
+			<select class="form-control" ng-model="refreshTime"
+				ng-change="queryByTime();">
+				<option value="">请选择刷新时间</option>
+				<option ng-repeat="v in monitorData track by $index"
+					value="{{v.id}}">{{v.name}}</option>
+			</select>
+			<!-- <input type="text" ng-model="number"> -->
+		</div>
+	</div>
+	<div id="show">
+		<table
+			class="table table-bordered table-striped  table-hover table-responsive ">
+			<thead>
+				<tr>
+					<th class="first3">序号</th>
+					<th class="first3">项目名</th>
+					<th class="first3">开始时间</th>
+					<th class="first3">结束时间</th>
+					<th class="first3">状态</th>
+				</tr>
+			</thead>
+			<tbody id="_tbody">
+				<tr ng-repeat="v in proData track by $index">
+					<td>{{$index+1}}</td>
+					<td>{{v.name}}</td>
+					<td>{{v.beginDate}}</td>
+					<td>{{v.endDate}}</td>
+					<td>{{v.valid=="0"?"禁用":"启用"}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div id="show">
+		<table
+			class="table table-bordered table-striped  table-hover table-responsive ">
+			<thead>
+				<tr>
+					<th class="first3">序号</th>
+					<th class="first3">团队名称</th>
+					<th class="first3">人数</th>
+					<th class="first3">状态</th>
+				</tr>
+			</thead>
+			<tbody id="_tbody">
+				<tr ng-repeat="v in teamData track by $index">
+					<td>{{$index+1}}</td>
+					<td>{{v.name}}</td>
+					<td>{{v.roleNum}}</td>
+					<td>{{v.valid=="0"?"禁用":"启用"}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div id="show">
+		<table
+			class="table table-bordered table-striped  table-hover table-responsive ">
+			<thead>
+				<tr>
+					<th class="first3">序号</th>
+					<th class="first3">产品名</th>
+					<th class="first3">上架时间</th>
+					<th class="first3">下架时间</th>
+					<th class="first3">销售数量</th>
+					<th class="first3">价格</th>
+					<th class="first3">状态</th>
+				</tr>
+			</thead>
+			<tbody id="_tbody">
+				<tr ng-repeat="v in prodData track by $index">
+					<td>{{$index+1}}</td>
+					<td>{{v.name}}</td>
+					<td>{{v.onlineDate}}</td>
+					<td>{{v.offlineDate}}</td>
+					<td>{{v.soldQty}}</td>
+					<td>{{v.price}}</td>
+					<td>{{v.status=="0"?"待售":(v.status=="1"?"上架":"下架")}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+<script src="../common/page.js"></script>
+<script src="../../js/view/monitor/monitor.js"></script>
+</html>

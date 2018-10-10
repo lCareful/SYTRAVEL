@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- 调节试图大小 -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="侧边导航菜单">
+<meta name="keywords"
+	content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+<meta name="HandHeldFriendly" content="true">
+<title>尚游旅游业务管理系统</title>
+
+<!-- Bootstrap core CSS -->
+<link href="css/bootstrap.css" rel="stylesheet">
+<!--external css-->
+<link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
+
+
+<!-- Custom styles for this template -->
+<link href="css/style1.css" rel="stylesheet">
+<link href="css/style-responsive.css" rel="stylesheet">
+<!-- <script src="js/view/login/login.js"></script> -->
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body ng-app="syApp" ng-controller="indexCtrl">
+	<section id="container">
+		<header class="header black-bg">
+			<div class="sidebar-toggle-box">
+				<div class="fa fa-bars tooltips" data-placement="right"
+					data-original-title="全屏显示"></div>
+			</div>
+			<!--logo start-->
+			<a href="index.html" class="logo"><b>尚游旅游业务管理系统</b></a>
+
+			<div class="top-menu">
+				<ul class="nav pull-right top-menu">
+					<li style="margin-top: 20px; margin-right: 20px;"><span
+						style="font-weight: bold;">操作人：</span><span id="operator"
+						style="font-weight: bold;"></span></li>
+					<li><a class="logout" id="logout" href="login.html">退出</a></li>
+				</ul>
+			</div>
+		</header>
+		<!--header end-->
+
+		<!--侧边栏开始： sidebar start-->
+		<aside>
+			<div id="sidebar" class="nav-collapse">
+				<!-- sidebar menu start-->
+				<ul class="sidebar-menu" id="nav-accordion">
+
+					<p class="centered">
+						<a href="#"><img src="img/logo.jpg" class="img-circle"
+							width="60"></a>
+					</p>
+					<h5 class="centered">尚游</h5>
+
+					<li class="sub-menu" ng-show="projectTr"><a href="#"> <i class=" fa fa-cogs"></i>
+							<span>旅游项目</span> <i class=" fa fa-plus pull-right"></i>
+					</a>
+						<ul class="sub " style="display: none">
+							<li><a href="view/project/projectinfo.html" target="new-add"><i
+									class="fa fa-caret-right"></i>项目信息</a></li>
+							<li ng-show="projectManage"><a href="view/project/projectmanagement.html"
+								target="new-add"><i class="fa fa-caret-right"></i>项目管理</a></li>
+						</ul></li>
+
+					<li class="sub-menu" ng-show="teamTr" ><a href="#"> <i
+							class=" fa fa-cogs"></i> <span>旅游团队</span> <i
+							class=" fa fa-plus pull-right"></i>
+					</a>
+						<ul class="sub" style="display: none">
+							<li class="info"><a href="view/team/teaminfo.html" target="new-add"><i
+									class="fa fa-caret-right"></i>团队信息</a></li>
+							<li ng-show="teamManage"><a href="view/team/teammanagement.html" target="new-add"><i
+									class="fa fa-caret-right"></i>团队管理</a></li>
+						</ul></li>
+					<li class="sub-menu" ng-show="classesTr"><a href="#"> <i
+							class=" fa fa-cogs"></i> <span>产品分类</span> <i
+							class=" fa fa-plus pull-right"></i>
+					</a>
+						<ul class="sub" style="display: none">
+							<li><a href="view/classes/classesinfo.html" target="new-add"><i
+									class="fa fa-caret-right"></i>分类信息</a></li>
+							<li ng-show="classesManage"><a href="view/classes/classesmanagement.html"
+								target="new-add"><i class="fa fa-caret-right"></i>分类管理</a></li>
+						</ul></li>
+					<li class="sub-menu"><a href="javascript:;" ng-show="productTr"> <i
+							class="fa fa-book"></i> <span>旅游产品</span> <i
+							class=" fa fa-plus pull-right"></i>
+					</a>
+						<ul class="sub" style="display: none">
+							<li><a href="view/product/productinfo.html" target="new-add"><i
+									class="fa fa-caret-right"></i>产品信息</a></li>
+							<li ng-show="productManage"><a href="view/product/productmanagement.html"
+								target="new-add"><i class="fa fa-caret-right"></i>产品管理</a></li>
+						</ul></li>
+					<li class="sub-menu" ng-show="roleTr"><a href="view/role/role.html"
+						target="new-add"> <i class="fa fa-user"></i> <span>角色管理</span>
+							<i class=" fa fa-plus pull-right"></i>
+					</a> 
+					<ul class="sub" style="display: none"></ul>
+					</li>
+					<!-- 去掉的功能：上传下载	start ... -->
+					<!-- <li class="sub-menu"><a href="javascript:;" target="new-add">
+							<i class="glyphicon glyphicon-facetime-video"></i> <span>上传下载</span>
+							<i class=" fa fa-plus pull-right"></i>
+					</a>
+						<ul class="sub" style="display: none">
+							<li><a href="view/load/upload.html" target="new-add"><i
+									class="fa fa-caret-right"></i>上传</a></li>
+							<li><a href="view/load/upload.html" target="new-add"><i
+									class="fa fa-caret-right"></i>下载</a></li>
+						</ul></li>
+-->					<!-- 去掉的功能	end .... -->
+					<li class="sub-menu"><a class="active"
+						href="view/monitor/monitor.html" target="new-add"> <i
+							class="fa fa-dashboard"></i> <span>信息监控</span> <i
+							class=" fa fa-plus pull-right"></i>
+					</a>
+					<ul class="sub" style="display: none"></ul>
+					</li> 
+
+					<li class="sub-menu" ng-show="loggerTr"><a href="javascript:;"> <i
+							class="fa fa-edit"></i> <span>日志管理</span> <i
+							class=" fa fa-plus pull-right"></i>
+					</a>
+						<ul class="sub" style="display: none">
+							<li><a href="view/logger/logger.html" target="new-add"><i
+									class="fa fa-caret-right"></i>操作日志</a></li>
+						</ul></li>
+					<li class="sub-menu" ng-show="userTr"><a href="view/user/user.html"
+						target="new-add"> <i class="fa fa-user"></i> <span>系统用户</span>
+							<i class=" fa fa-plus pull-right"></i>
+					</a> 
+					<ul class="sub" style="display: none"></ul>
+					</li>
+				</ul>
+				<!-- sidebar menu end-->
+			</div>
+		</aside>
+		<!--sidebar end-->
+
+		<!--main content start-->
+		<section id="main-content">
+			<section class="wrapper">
+			<!-- view/monitor/monitor.html用来放监控页面 -->
+				<iframe src="view/monitor/monitor.html" name="new-add"
+					class="a4" style="border: none; width: 100%; height: 150%;">
+				</iframe>
+			</section>
+		</section>
+		<!--main content end-->
+
+	</section>
+</body>
+	<script src="js/jquery.js"></script>
+	<script src="js/jquery-1.8.3.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/jquery.scrollTo.min.js"></script>
+	<script src="js/jquery.nicescroll.js"></script>
+	<script src="js/jquery.sparkline.js"></script>
+	<script src="js/angularjs/angular1.js"></script>
+	<script src="js/angularjs/angular-ui-router.js"></script>
+	<script src="js/gritter-conf.js"></script>
+	<!-- common-scripts.js是侧边栏的点击处理脚本 -->
+	<script src="js/common-scripts.js"></script>
+	<script src="view/common/page.js"></script>
+	<script>
+	app.controller('indexCtrl', ['$scope', '$http', function ($scope, $http) {
+		$("#operator").html(document.cookie.toString());
+		var name = document.cookie.toString();
+		if(name==""){
+			window.parent.document.location.href = "http://localhost:8080/login.html";
+		} else {
+			$scope.userTr = false;
+			$scope.roleTr = false;
+			$scope.loggerTr = true;//信息
+			$scope.productManage = false;//管理
+			$scope.productTr = true;
+			$scope.classesManage = false;
+			$scope.classesTr = true;
+			$scope.teamManage = false;
+			$scope.teamTr = true;
+			$scope.projectTr = false;
+			$scope.projectManage = false;
+			$http.get("http://localhost:8080/sy/user/permission", {params:{"name":name}})
+			.success(function(data){
+				/* 在此进行用权限功能的分配 */
+				if(data.data == "0"){
+					/*管理员权限*/
+					$scope.userTr = true;
+					$scope.roleTr = true;
+					$scope.productManage = true;
+					$scope.classesManage = true;
+					$scope.teamManage = true;
+					$scope.projectTr = true;
+					$scope.projectManage = true;
+				} else if(data.data=="1"){
+					/*项目负责人权限*/
+					$(".shenji").hide();
+					$scope.projectTr = true;
+					$scope.projectManage = true;
+				} else if(data.data == "2"){
+					/*团队负责人权限*/
+					$scope.roleTr = true;
+					$scope.teamManage = true;
+				} else if(data.data == "3"){
+					/*产品经理权限*/
+					$scope.productManage = true;
+					$scope.classesManage = true;
+					$scope.teamTr = false;
+				} else if(data.data == "4"){
+					/*审计权限*/
+					$scope.loggerTr = false;
+					$scope.projectTr = true;
+				} else if(data.data == "5"){
+					/*监控权限*/
+					$scope.productTr = false;
+					$scope.classesTr = false;
+					$scope.teamTr = false;
+				} else {
+					alert("权限不足，请重新登录！");
+					$scope.loggerTr = false;
+					$scope.productTr = false;
+					$scope.classesTr = false;
+					window.parent.document.location.href = "http://localhost:8080/login.html";
+				}
+			})
+			.error(function(err){
+			});
+		}
+		}]);
+
+	</script>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>路由</title>
+    <script src="angular1.js"></script>
+    <script src="angular-route.js"></script>
+	<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body ng-app="myApp">
+
+<nav class="navbar navbar-default" role="navigation">
+	<div class="container-fluid">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="#/home">菜鸟教程</a>
+	</div>
+	<div >
+		<ul class="nav navbar-nav">
+			<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown">
+					请选择
+					<b class="caret"></b>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a href="#/about">jmeter</a></li>
+					<li class="divider"></li>
+					<li><a href="#/logger">分离的链接</a></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+	</div>
+</nav>
+<div ng-view ></div>
+</body>
+<script>
+    angular.module('myApp', [ 'ngRoute' ])
+        .config(function ($routeProvider) {
+            $routeProvider
+                .when('/home', {
+                    templateUrl : '../../view/team/teaminfo.html',
+                })
+                .when('/about', {
+                    templateUrl : '../../view/project/projectinfo.html',
+                })
+                .when('/logger', {
+                	templateUrl : '../../view/logger/logger.html',
+                })
+                .otherwise({
+                    redirectTo : '/home'
+                });
+        });
+</script>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link href="../../css/commom1.css" type="text/css" rel="Stylesheet"/>
+    <link href="../../css/style1.css" type="text/css" rel="Stylesheet"/>
+    <link rel="stylesheet" href="../../css/bootstrap.css"/>
+    <script src="../../js/jquery-1.11.3.js"></script>
+    <script src="../../js/bootstrap.js"></script>
+    <!--[if lt IE 9]>
+    <script src="../../js/html5shiv.min.js"></script>
+    <script src="../../js/respond.min.js"></script>
+    <![endif]-->
+    <script src="../../js/angularjs/angular1.js"></script>
+    <script src="../../js/angularjs/angular-ui-router.js"></script>
+    <title>分类管理</title>
+</head>
+<body ng-app="syApp" ng-controller="classesCtrl">
+<div id="show">
+    <table
+            class="table table-bordered table-striped  table-hover table-responsive ">
+        <thead>
+        <tr>
+            <th class="first3">序号</th>
+            <th class="first3">分类名称</th>
+            <th class="first3">分类号</th>
+            <th class="first3">所属父类</th>
+            <th class="first3">创建者</th>
+            <th class="first3">创建时间</th>
+            <th class="first3">修改者</th>
+			<th class="first3">修改时间</th>
+            <th class="first3">备注</th>
+            <th class="first3">操作</th>
+        </tr>
+        </thead>
+        <tbody id="_tbody">
+        <tr ng-repeat="v in data track by $index">
+            <td>{{$index + 1}}</td>
+            <td>{{v.name}}</td>
+            <td>{{v.sortId}}</td>
+            <td>{{v.parentName==""?"无":v.parentName}}</td>
+            <td>{{v.createdUser}}</td>
+           	<td>{{v.createdDate}}</td>
+            <td>{{v.modifiedUser}}</td>
+            <td>{{v.modifiedDate}}</td>
+            <td>{{v.remark}}</td>
+            <td>
+                <button data-toggle="modal" data-target="#updateClassesModal" class="btn btn-warning"
+                        ng-click="updateValue(v)">修改
+                </button>
+                <button ng-click="deleteClasses(v.id);" class="btn btn-danger">删除</button>
+            </td>
+        </tr>
+        </tbody>
+        <tfoot id="_tfoot">
+        </tfoot>
+    </table>
+    <div ng-show="isShow">
+			<!-- 这个分页的导航栏开始数字和结束数字会随着用户的点击而改变 -->
+			<ul class="pagination pull-right">
+				<li><a ng-click="previous();">&laquo;</a></li>
+				<li ng-repeat="page in paging"
+					ng-class="{active:isActivePage(page)}"><a
+					ng-click="current(page);">{{page}}</a></li>
+				<li><a ng-click="next();">&raquo;</a></li>
+			</ul>
+		</div>
+</div>
+<div style="text-align: center;">
+    <button class="btn btn-primary btn-add" data-toggle="modal"  ng-click="addValue();" data-target="#addClassesModal">
+    	添加分类
+    </button>
+</div>
+<!--添加分类信息的模态框-->
+<div class="modal fade" id="addClassesModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;
+                </button>
+                <h4 class="modal-title">添加分类信息</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="addClassesName" class="col-sm-2 control-label">分类名称</label>
+                        <div class="col-sm-10">
+                            <input style="width: 384px;" type="text" class="form-control"
+                                   id="addClassesName" placeholder="请输入分类名" ng-model="addName">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="addClassesSortId">分类号</label>
+                        <div class="col-sm-10">
+                           <input style="width: 384px;" type="text" class="form-control"
+                                   id="addClassesSortId" placeholder="请输入分类号,仅支持数字" ng-model="addSortId">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">所属父类</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" ng-model="addParentId">
+                            	<option value="">无</option>
+                                <option ng-repeat="v in data track by $index" value="{{v.id}}">{{v.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="addClassesRemark" class="col-sm-2 control-label">描述</label>
+                        <div class="col-sm-10"><!-- col-sm-10：小屏幕时占10/12 -->
+                            <textarea class="form-control" rows="3" placeholder="请输入描述信息"
+                                      id="addClassesRemark" ng-model="addRemark"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <div style="color: red; text-align: center; font-size: 35px">{{addReason}}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消
+                </button>
+                <button type="button" class="btn btn-primary change" ng-click="addClasses();">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--修改分类信息的模态框-->
+<div class="modal fade" id="updateClassesModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;
+                </button>
+                <h4 class="modal-title">修改分类信息</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="updateClassesName" class="col-sm-2 control-label">分类名称</label>
+                        <div class="col-sm-10">
+                            <input style="width: 384px;" type="text" class="form-control"
+                                   id="updateClassesName" placeholder="请输入分类名" ng-model="updateName">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="updateClassesSortId">分类号</label>
+                        <div class="col-sm-10">
+                           <input style="width: 384px;" type="text" class="form-control"
+                                   id="updateClassesSortId" placeholder="请输入分类号,仅支持数字" ng-model="updateSortId">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">所属父类</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" ng-model="updateParentId">
+                            	<option value="">无</option>
+                                <option ng-repeat="v in data track by $index" value="{{v.id}}">{{v.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateClassesRemark" class="col-sm-2 control-label">描述</label>
+                        <div class="col-sm-10"><!-- col-sm-10：小屏幕时占10/12 -->
+                            <textarea class="form-control" rows="3" placeholder="请输入描述信息"
+                                      id="updateClassesRemark" ng-model="updateRemark"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <div style="color: red; text-align: center; font-size: 35px">{{updateReason}}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消
+                </button>
+                <button type="button" class="btn btn-primary change" ng-click="updateClasses();">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../common/page.js"></script>
+<script src="../../js/view/classes/classes.js"></script>
+</body>
+</html>

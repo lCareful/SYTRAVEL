@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Highcharts Example</title>
+
+		<script type="text/javascript" src="highcharts/jquery-1.8.3.min.js"></script>
+
+        <style type="text/css">
+            *{margin:0;padding:0;}
+            html,body{height:100%;width:100%;}
+
+
+		</style>
+		<script type="text/javascript">
+$(function () {
+    $('#container').highcharts({
+        colors: [ '#64e572', '#f7a35c',
+             '#e4d354', ],
+        credits: {
+            enabled: false
+        },
+        chart: {
+            backgroundColor: {
+                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                stops: [
+                    [0, 'rgba(255, 255, 255,)'],
+                    [1, 'rgba(255, 255, 255,)']
+                ]
+            },
+            type: 'pie',
+            options3d: {
+                enabled: false,
+                alpha: 55
+
+
+            }
+        },
+        title: {
+            text: '内存',
+            style:{
+                fontFamily:"Arial",
+                fontSize:'24px',
+                fontWeight:'bold',
+                color:"#9ba5af"
+            }
+        },
+        subtitle: {
+          /*  text: '中国你好',*/
+            style:{
+                fontFamily:"Arial",
+                fontSize:'16px',
+                fontWeight:'bold',
+                color:"#00ff00"
+            }
+        },
+        plotOptions: {
+            pie: {
+                size:100,
+                innerSize: 50,
+                depth: 30
+            }
+        },
+        series: [{
+            name: '内存',
+            data: [
+                ['已用容量', 6],
+                ['剩余容量', 8]
+            ]
+        }]
+    });
+});
+		</script>
+	</head>
+	<body>
+    <script src="highcharts/highcharts.js"></script>
+    <script src="highcharts/highcharts-3d.js"></script>
+    <script src="highcharts/exporting.js"></script>
+    <script type="text/javascript" src="highcharts/highcharts-zh_CN.js"></script>
+<div id="container" style="height: 100%;width:100%;"></div>
+	</body>
+</html>

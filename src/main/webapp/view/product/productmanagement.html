@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link href="../../css/commom1.css" type="text/css" rel="Stylesheet"/>
+    <link href="../../css/style1.css" type="text/css" rel="Stylesheet"/>
+    <link rel="stylesheet" href="../../css/bootstrap.css"/>
+    <script src="../../js/jquery-1.11.3.js"></script>
+    <script src="../../js/bootstrap.js"></script>
+    <!--[if lt IE 9]>
+    <script src="../../js/html5shiv.min.js"></script>
+    <script src="../../js/respond.min.js"></script>
+    <![endif]-->
+    <script src="../../js/angularjs/angular1.js"></script>
+    <script src="../../js/angularjs/angular-ui-router.js"></script>
+    <title>产品管理</title>
+</head>
+<body ng-app="syApp" ng-controller="productCtrl">
+<div id="show">
+    <table
+            class="table table-bordered table-striped  table-hover table-responsive ">
+        <thead>
+        <tr>
+            <th class="first3">序号</th>
+            <th class="first3">产品编号</th>
+            <th class="first3">产品名称</th>
+            <th class="first3">特殊提示</th>
+            <th class="first3">预售数量</th>
+			<th class="first3">最低数量</th>
+            <th class="first3">产品价格</th>
+           	<th class="first3">晚数</th>
+           	<th class="first3">产品状态</th>
+           	<th class="first3">修改人</th>
+           	<th class="first3">修改时间</th>
+           	<th class="first3">备注</th>
+            <th class="first3">操作</th>
+        </tr>
+        </thead>
+        <tbody id="_tbody">
+        <tr ng-repeat="v in data track by $index">
+            <td>{{$index + 1}}</td>
+            <td>{{v.code}}</td>
+            <td>{{v.name}}</td>
+            <td>{{v.exText}}</td>
+            <td>{{v.quantity}}</td>
+            <td>{{v.minQty}}</td>
+           	<td>{{v.price}}</td>
+            <td>{{v.nights}}</td>
+            <td>{{v.status=="0"?"待售":(v.status=="1"?"上架":"下架")}}</td>
+            <td>{{v.modifiedUser}}</td>
+            <td>{{v.modifiedDate}}</td>
+            <td>{{v.remark}}</td>
+            <td>
+                <button data-toggle="modal" data-target="#updateProductModal" class="btn btn-warning"
+                        ng-click="updateValue(v)">修改
+                </button>
+                <button ng-click="deleteProduct(v.id);" class="btn btn-danger">删除</button>
+            </td>
+        </tr>
+        </tbody>
+        <tfoot id="_tfoot">
+        </tfoot>
+    </table>
+    <div ng-show="isShow">
+			<!-- 这个分页的导航栏开始数字和结束数字会随着用户的点击而改变 -->
+			<ul class="pagination pull-right">
+				<li><a ng-click="previous();">&laquo;</a></li>
+				<li ng-repeat="page in paging"
+					ng-class="{active:isActivePage(page)}"><a
+					ng-click="current(page);">{{page}}</a></li>
+				<li><a ng-click="next();">&raquo;</a></li>
+			</ul>
+		</div>
+</div>
+<div style="text-align: center;">
+    <button class="btn btn-primary btn-update" data-toggle="modal"  ng-click="addValue();" data-target="#addProductModal">
+    	添加产品
+    </button>
+</div>
+<!--添加产品信息的模态框-->
+<div class="modal fade" id="addProductModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;
+                </button>
+                <h4 class="modal-title">添加产品信息</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                <div class="form-group">
+                        <label class="col-sm-2 control-label" for="addProductSortId">产品编号</label>
+                        <div class="col-sm-10">
+                           <input style="width: 384px;" type="text" class="form-control"
+                                   id="addProductSortId" placeholder="请输入产品编号" ng-model="addCode">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="addProductName" class="col-sm-2 control-label">产品名称</label>
+                        <div class="col-sm-10">
+                            <input style="width: 384px;" type="text" class="form-control"
+                                   id="addProductName" placeholder="请输入产品名" ng-model="addName">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">所属团队</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" ng-model="addTeamId">
+                            	<option value="">-- 请选择 --</option>
+                                <option ng-repeat="v in tdata track by $index" value="{{v.id}}">{{v.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="addExText">特殊提示</label>
+                        <div class="col-sm-10">
+                           <input style="width: 384px;" type="text" class="form-control"
+                                   id="addExText" placeholder="请输入特殊提示" ng-model="addExText">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="addoDate" class="col-sm-2 control-label">上架时间</label>
+                        <div class="col-sm-10">
+                            <input style="width: 384px;" type="datetime-local" class="form-control"
+                                   id="addoDate" ng-model="addOnlineDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="addffDate" class="col-sm-2 control-label">下架时间</label>
+                        <div class="col-sm-10">
+                            <input style="width: 384px;" type="datetime-local" class="form-control"
+                                   id="addffDate" ng-model="addOfflineDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">产品分类</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" ng-model="addClassesId">
+                            	<option value="">-- 请选择 --</option>
+                                <option ng-repeat="v in cdata track by $index" value="{{v.id}}">{{v.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="addQquantity">预售数量</label>
+                        <div class="col-sm-10">
+                           <input style="width: 384px;" type="number" class="form-control"
+                                   id="addQquantity" placeholder="请输入预售数量，仅支持数字" ng-model="addQuantity" onkeyup="value=value.replace(/[^\d]/g,'')">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="addMinQty">最低数量</label>
+                        <div class="col-sm-10">
+                           <input style="width: 384px;" type="number" class="form-control"
+                                   id="addMinQty" placeholder="请输入最低数量，仅支持数字" ng-model="addMinQty" onkeyup="value=value.replace(/[^\d]/g,'')">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="addsoldQty">已售数量</label>
+                        <div class="col-sm-10">
+                           <input style="width: 384px;" type="number" class="form-control"
+                                   id="addsoldQty" placeholder="请输入已售数量，仅支持数字" ng-model="addSoldQty" onkeyup="value=value.replace(/[^\d]/g,'')">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="addprice">产品价格</label>
+                        <div class="col-sm-10">
+                           <input style="width: 384px;" type="number" class="form-control"
+                                   id="addprice" placeholder="请输入产品价格，仅支持数字" ng-model="addPrice" onkeyup="value=value.replace(/[^\d]/g,'')">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="addnights">经过晚数</label>
+                        <div class="col-sm-10">
+                           <input style="width: 384px;" type="number" class="form-control"
+                                   id="addnights" placeholder="请输入经过晚数，仅支持数字" ng-model="addNights" onkeyup="value=value.replace(/[^\d]/g,'')">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">状态</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" ng-model="addStatus">
+                                <option value="">-- 请选择 --</option>
+                                <option value="0">待售</option>
+                                <option value="1">上架</option>
+                                <option value="2">下架</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="addClassesRemark" class="col-sm-2 control-label">描述</label>
+                        <div class="col-sm-10"><!-- col-sm-10：小屏幕时占10/12 -->
+                            <textarea class="form-control" rows="3" placeholder="请输入描述信息"
+                                      id="addClassesRemark" ng-model="addRemark"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <div style="color: red; text-align: center; font-size: 35px">{{addReason}}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消
+                </button>
+                <button type="button" class="btn btn-primary change" ng-click="addProduct();">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--修改产品信息的模态框-->
+<div class="modal fade" id="updateProductModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;
+                </button>
+                <h4 class="modal-title">修改产品信息</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="updateProductName" class="col-sm-2 control-label">产品名称</label>
+                        <div class="col-sm-10">
+                            <input style="width: 384px;" type="text" class="form-control"
+                                   id="updateProductName" placeholder="请输入产品名" ng-model="updateName">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="updateExText">特殊提示</label>
+                        <div class="col-sm-10">
+                           <input style="width: 384px;" type="text" class="form-control"
+                                   id="updateExText" placeholder="请输入特殊提示" ng-model="updateExText">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="updateQquantity">预售数量</label>
+                        <div class="col-sm-10">
+                           <input style="width: 384px;" type="text" class="form-control"
+                                   id="updateQquantity" placeholder="请输入预售数量，仅支持数字" ng-model="updateQuantity">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="updateMinQty">最低数量</label>
+                        <div class="col-sm-10">
+                           <input style="width: 384px;" type="text" class="form-control"
+                                   id="updateMinQty" placeholder="请输入最低数量，仅支持数字" ng-model="updateMinQty">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="updatesoldQty">已售数量</label>
+                        <div class="col-sm-10">
+                           <input style="width: 384px;" type="text" class="form-control"
+                                   id="updatesoldQty" placeholder="请输入已售数量，仅支持数字" ng-model="updateSoldQty">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="updateprice">产品价格</label>
+                        <div class="col-sm-10">
+                           <input style="width: 384px;" type="text" class="form-control"
+                                   id="updateprice" placeholder="请输入产品价格，仅支持数字" ng-model="updatePrice">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="updatenights">经过晚数</label>
+                        <div class="col-sm-10">
+                           <input style="width: 384px;" type="text" class="form-control"
+                                   id="updatenights" placeholder="请输入经过晚数，仅支持数字" ng-model="updateNights">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">状态</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" ng-model="updateStatus">
+                                <option value="">-- 请选择 --</option>
+                                <option value="0">待售</option>
+                                <option value="1">上架</option>
+                                <option value="2">下架</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateClassesRemark" class="col-sm-2 control-label">描述</label>
+                        <div class="col-sm-10"><!-- col-sm-10：小屏幕时占10/12 -->
+                            <textarea class="form-control" rows="3" placeholder="请输入描述信息"
+                                      id="updateClassesRemark" ng-model="updateRemark"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <div style="color: red; text-align: center; font-size: 35px">{{updateReason}}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消
+                </button>
+                <button type="button" class="btn btn-primary change" ng-click="updateProduct();">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../common/page.js"></script>
+<script src="../../js/view/product/product.js"></script>
+</body>
+</html>

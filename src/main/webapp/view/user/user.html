@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="utf-8" />
+<meta name="viewport"
+	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<link href="../../css/commom1.css" type="text/css" rel="Stylesheet" />
+<link href="../../css/style1.css" type="text/css" rel="Stylesheet" />
+<link rel="stylesheet" href="../../css/bootstrap.css" />
+<script src="../../js/jquery-1.11.3.js"></script>
+<script src="../../js/bootstrap.js"></script>
+<!--[if lt IE 9]>
+    <script src="../../js/html5shiv.min.js"></script>
+    <script src="../../js/respond.min.js"></script>
+    <![endif]-->
+<script src="../../js/angularjs/angular1.js"></script>
+<script src="../../js/angularjs/angular-ui-router.js"></script>
+<title>用户管理</title>
+<style>
+#div {
+	width:40%;
+	margin: 10px;
+}
+</style>
+</head>
+<body ng-app="syApp" ng-controller="userCtrl">
+	<div class="col-lg-6;">
+		<div class="input-group" id="div">
+			<input type="text" ng-model="inputName" placeholder="请输入用户名查询"
+				id="form-control" class="form-control"> <span
+				class="input-group-btn" id="input-group-btn">
+				<button class="btn btn-default" type="button"
+					ng-click="queryByName();">查询</button>
+			</span>
+		</div>
+	</div>
+	<div id="show">
+		<table
+			class="table table-bordered table-striped  table-hover table-responsive ">
+			<thead>
+				<tr>
+					<th class="first3">序号</th>
+					<th class="first3">用户名</th>
+					<th class="first3">用户权限</th>
+					<th class="first3">备注</th>
+					<th class="first3">操作</th>
+				</tr>
+			</thead>
+			<tbody id="_tbody">
+				<tr ng-repeat="v in data track by $index">
+					<td>{{$index + 1}}</td>
+					<td>{{v.username}}</td>
+					<td>{{userData[v.permission].name}}</td>
+					<td>{{v.remark}}</td>
+					<td>
+						<button data-toggle="modal" data-target="#updateUserModal"
+							class="btn btn-warning" ng-click="updateValue(v)">修改</button>
+						<button ng-click="deleteUser(v.id);" class="btn btn-danger">删除</button>
+					</td>
+				</tr>
+			</tbody>
+			<tfoot id="_tfoot">
+			</tfoot>
+		</table>
+		<div ng-show="isShow">
+			<!-- 这个分页的导航栏开始数字和结束数字会随着用户的点击而改变 -->
+			<ul class="pagination pull-right">
+				<li><a ng-click="previous();">&laquo;</a></li>
+				<li ng-repeat="page in paging"
+					ng-class="{active:isActivePage(page)}"><a
+					ng-click="current(page);">{{page}}</a></li>
+				<li><a ng-click="next();">&raquo;</a></li>
+			</ul>
+		</div>
+	</div>
+	<div style="text-align: center;">
+		<button class="btn btn-primary btn-add" data-toggle="modal"
+			ng-click="addValue();" data-target="#addUserModal">添加用户</button>
+			<button class="btn btn-primary btn-warning" data-toggle="modal"
+			data-target="#updateAdminPModal" ng-click="updateP();" ng-show="showBtn">修改超级管理员密码</button>
+	</div>
+	<div class="modal fade" id="updateAdminPModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">修改超级管理员密码</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form">
+						<div class="form-group">
+							<label for="dataPwd" class="col-sm-2 control-label">原密码</label>
+							<div class="col-sm-10">
+								<input style="width: 384px;" type="password"
+									class="form-control" id=""dataPwd" placeholder="请输入用户原密码"
+									ng-model="updateDatePwd">
+							</div>
+							</div>
+							<div class="form-group">
+							<label for="updateNewPwd" class="col-sm-2 control-label">新密码</label>
+							<div class="col-sm-10">
+								<input style="width: 384px;" type="password"
+									class="form-control" id="updateNewPwd" placeholder="请输入用户新密码"
+									ng-model="updateNewPwd">
+							</div>
+							</div>
+							<div class="form-group">
+							<label for="newPwd" class="col-sm-2 control-label">确认新密码</label>
+							<div class="col-sm-10">
+								<input style="width: 384px;" type="password"
+									class="form-control" id="newPwd" placeholder="请输入确认用户新密码"
+									ng-model="newPwd">
+							</div>
+						</div>
+					<div style="color: red; text-align: center; font-size: 35px">{{updatePwdReason}}</div>
+				</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消
+					</button>
+					<button type="button" class="btn btn-primary change"
+						ng-click="updateAdminP();">确认</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--添加用户信息的模态框-->
+	<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">添加用户信息</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form">
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="addUserName">用户名</label>
+							<div class="col-sm-10">
+								<input style="width: 384px;" type="text" class="form-control"
+									id="addUserName" placeholder="请输入用户名" ng-model="addUsername">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="addPwd" class="col-sm-2 control-label">用户密码</label>
+							<div class="col-sm-10">
+								<input style="width: 384px;" type="password"
+									class="form-control" id="addPwd" placeholder="请输入用户密码"
+									ng-model="addPassword">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">用户权限</label>
+							<div class="col-sm-10">
+								<select class="form-control" ng-model="addPermission">
+									<option value="">-- 请选择 --</option>
+									<option ng-repeat="v in userData track by $index"
+										value="{{v.id}}">{{v.name}}</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="addClassesRemark" class="col-sm-2 control-label">描述</label>
+							<div class="col-sm-10">
+								<!-- col-sm-10：小屏幕时占10/12 -->
+								<textarea class="form-control" rows="3" placeholder="请输入描述信息"
+									id="addClassesRemark" ng-model="addRemark"></textarea>
+							</div>
+						</div>
+					</form>
+					<div style="color: red; text-align: center; font-size: 35px">{{addReason}}</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消
+					</button>
+					<button type="button" class="btn btn-primary change"
+						ng-click="addUser();">确认</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--修改用户信息的模态框-->
+	<div class="modal fade" id="updateUserModal" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">修改用户信息</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form">
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="addUserName">用户名</label>
+							<div class="col-sm-10">
+								<input style="width: 384px; background: #CCCCCC;" type="text"
+									class="form-control" id="UpdateUserName" ng-model="updateUsername"
+									readonly="readonly">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="updatePwd" class="col-sm-2 control-label">用户密码</label>
+							<div class="col-sm-10">
+								<input style="width: 384px;" type="password"
+									class="form-control" id="updatePwd" placeholder="请输入用户密码"
+									ng-model="updatePassword">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">用户权限</label>
+							<div class="col-sm-10">
+								<select class="form-control" ng-model="UpdatePermission">
+									<option value="">-- 请选择 --</option>
+									<option ng-repeat="v in userData track by $index"
+										value="{{v.id}}">{{v.name}}</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="updateClassesRemark" class="col-sm-2 control-label">描述</label>
+							<div class="col-sm-10">
+								<!-- col-sm-10：小屏幕时占10/12 -->
+								<textarea class="form-control" rows="3" placeholder="请输入描述信息"
+									id="updateClassesRemark" ng-model="updateRemark"></textarea>
+							</div>
+						</div>
+					</form>
+					<div style="color: red; text-align: center; font-size: 35px">{{updateReason}}</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消
+					</button>
+					<button type="button" class="btn btn-primary change"
+						ng-click="updateUser();">确认</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="../common/page.js"></script>
+	<script src="../../js/view/user/user.js"></script>
+</body>
+</html>

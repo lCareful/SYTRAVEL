@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link href="../../css/commom1.css" type="text/css" rel="Stylesheet"/>
+    <link href="../../css/style1.css" type="text/css" rel="Stylesheet"/>
+    <link rel="stylesheet" href="../../css/bootstrap.css"/>
+    <script src="../../js/jquery-1.11.3.js"></script>
+    <script src="../../js/bootstrap.js"></script>
+    <!--[if lt IE 9]>
+    <script src="../../js/html5shiv.min.js"></script>
+    <script src="../../js/respond.min.js"></script>
+    <![endif]-->
+    <script src="../../js/angularjs/angular1.js"></script>
+    <script src="../../js/angularjs/angular-ui-router.js"></script>
+    <title>项目管理</title>
+</head>
+<body ng-app="syApp" ng-controller="projectCtrl">
+<div id="show">
+    <table
+            class="table table-bordered table-striped  table-hover table-responsive "
+    >
+        <thead>
+        <tr>
+            <th class="first3">序号</th>
+            <th class="first3">项目编号</th>
+            <th class="first3">项目名</th>
+            <th class="first3">开始时间</th>
+            <th class="first3">结束时间</th>
+            <th class="first3">状态</th>
+            <th class="first3">备注</th>
+            <th class="first3">创建者</th>
+            <th class="first3">创建时间</th>
+            <th class="first3">修改者</th>
+            <th class="first3">修改时间</th>
+            <th class="first3">操作</th>
+        </tr>
+        </thead>
+        <tbody id="_tbody">
+        <tr ng-repeat="v in data track by $index">
+            <td>{{$index + 1}}</td>
+            <td>{{v.code}}</td>
+            <td>{{v.name}}</td>
+            <td>{{v.beginDate}}</td>
+            <td>{{v.endDate}}</td>
+            <td>{{v.valid == 1 ? "启用":"禁用"}}</td>
+            <td>{{v.remark}}</td>
+            <td>{{v.createdUser}}</td>
+            <td>{{v.createdDate}}</td>
+            <td>{{v.modifiedUser}}</td>
+            <td>{{v.modifiedDate}}</td>
+            <td>
+                <button data-toggle="modal" data-target="#updateProjectModal" class="btn btn-warning" ng-click="updateValue(v)">修改</button>
+                <button ng-click="deleteProject(v.id);" class="btn btn-danger">删除</button>
+            </td>
+        </tr>
+        </tbody>
+        <tfoot id="_tfoot">
+        </tfoot>
+    </table>
+    <div ng-show="isShow">
+			<!-- 这个分页的导航栏开始数字和结束数字会随着用户的点击而改变 -->
+			<ul class="pagination pull-right">
+				<li><a ng-click="previous();">&laquo;</a></li>
+				<li ng-repeat="page in paging"
+					ng-class="{active:isActivePage(page)}"><a
+					ng-click="current(page);">{{page}}</a></li>
+				<li><a ng-click="next();">&raquo;</a></li>
+			</ul>
+		</div>
+</div>
+<div style="text-align: center;">
+    <button class="btn btn-primary btn-add" data-toggle="modal" data-target="#addProjectModal" ng-click="addValue();">
+        添加项目
+    </button><!-- data-target="#addProjectModal" -->
+</div>
+<!-- 添加项目信息的模态框 -->
+<div class="modal fade" id="addProjectModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;
+                </button>
+                <h4 class="modal-title">添加项目信息</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="projectCode" class="col-sm-2 control-label">项目编号</label>
+                        <div class="col-sm-10">
+                            <input style="width: 384px;" type="text" class="form-control"
+                                   id="projectCode" placeholder="请输入项目编号" ng-model="addCode">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectName" class="col-sm-2 control-label">项目名</label>
+                        <div class="col-sm-10">
+                            <input style="width: 384px;" type="text" class="form-control"
+                                   id="projectName" placeholder="请输入项目名" ng-model="addName">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pDeginDate" class="col-sm-2 control-label">项目开始时间</label>
+                        <div class="col-sm-10">
+                            <input style="width: 384px;" type="datetime-local" class="form-control"
+                                   id="pDeginDate" ng-model="addBeginDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pEndDate" class="col-sm-2 control-label">项目结束时间</label>
+                        <div class="col-sm-10">
+                            <input style="width: 384px;" type="datetime-local" class="form-control"
+                                   id="pEndDate" ng-model="addEndDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">状态</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" ng-model="addValid">
+                                <option value="">请选择状态</option>
+                                <option value="1">启用</option>
+                                <option value="0">禁用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="remark" class="col-sm-2 control-label">描述</label>
+                        <div class="col-sm-10"><!-- col-sm-10：小屏幕时占10/12 -->
+                            <textarea class="form-control" rows="3" placeholder="请输入描述信息"
+                                      id="remark" ng-model="addRemark"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <div style="color: red; text-align: center; font-size: 35px">{{addReason}}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消
+                </button>
+                <button class="btn btn-primary change" ng-click="addProject();">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--修改项目信息的模态框-->
+<div class="modal fade" id="updateProjectModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;
+                </button>
+                <h4 class="modal-title">修改项目信息</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="projectCodeU" class="col-sm-2 control-label">项目编号</label>
+                        <div class="col-sm-10">
+                            <input style="width: 384px;" type="text" class="form-control"
+                                   id="projectCodeU" placeholder="请输入项目编号" ng-model="updateCode">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectNameU" class="col-sm-2 control-label">项目名</label>
+                        <div class="col-sm-10">
+                            <input style="width: 384px;" type="text" class="form-control"
+                                   id="projectNameU" placeholder="请输入项目名" ng-model="updateName">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="uDeginDate" class="col-sm-2 control-label">项目开始时间</label>
+                        <div class="col-sm-10">
+                            <input style="width: 384px;" type="datetime-local" class="form-control"
+                                   id="uDeginDate" ng-model="updateBeginDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="uEndDate" class="col-sm-2 control-label">项目结束时间</label>
+                        <div class="col-sm-10">
+                            <input style="width: 384px;" type="datetime-local" class="form-control"
+                                   id="uEndDate" ng-model="updateEndDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">状态</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" ng-model="updateValid">
+                                <option value="">请选择状态</option>
+                                <option value="1">启用</option>
+                                <option value="0">禁用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="remarkU" class="col-sm-2 control-label">描述</label>
+                        <div class="col-sm-10"><!-- col-sm-10：小屏幕时占10/12 -->
+                            <textarea class="form-control" rows="3" placeholder="请输入描述信息"
+                                      id="remarkU" ng-model="updateRemark"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <div style="color: red; text-align: center; font-size: 35px">{{updateReason}}</span></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消
+                </button>
+                <button type="button" class="btn btn-primary change" ng-click="updateProject()">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="../common/page.js"></script>
+<script src="../../js/view/project/project.js"></script>
+</html>

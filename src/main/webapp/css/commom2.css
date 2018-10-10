@@ -1,0 +1,28 @@
+html,body{margin:0;padding: 0;height:100%;}
+*{list-style: none;}
+a{text-decoration: none;}
+#layout {  width: 100%;  height: 100%;  margin: 0px auto;  overflow: hidden;  }
+header{width:100%;height:7%;background:#48cfad;overflow: hidden;float:left;}
+.left{height:100%;padding-left:1%;color:#000;font-size:26px;
+    font-weight: bold;float:left;line-height: 170%}
+.right{float:right;height:100%;padding-right:2%;}
+.nav1{width:100%;line-height: 250%;text-align:center;
+}
+.nav1 #date{text-align: center;}
+/**** 主体区域****/
+.container{width:100%; height: 88%;  overflow: hidden;  padding:0;}
+.sidebar{width:15%;height:100%; float:left; background: #424a5d;padding-top:1%;overflow: hidden;}
+
+.abd{width:100%; text-align: center;line-height: 300%;height: 8%;
+       background:#424a5d;
+    }
+.abd a{color:#9a9a9a;font-weight: bold;}
+.abd:hover a{ color: #fff ;}
+.abd:hover {  border:none;cursor: pointer;
+    background:#48cfad; ;
+    }
+.zhu{width:85%;height:100%;float:left;overflow: hidden; background: #777777;}
+#footer{height:5%;width:100%; background: #666;}
+.zhu .a4{border:none}
+
+
